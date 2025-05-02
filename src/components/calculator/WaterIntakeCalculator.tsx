@@ -1,5 +1,11 @@
 "use client";
 import { useState } from "react";
+import { calculateWetBulbTemp } from "../../utils/calculateWetBulbTemp";
+import { calculateWaterIntake } from "../../utils/waterIntakeCalculator";
+import InputField from "../ui/calcInput";
+import WBGTInfoPopup from "../ui/popup";
+import WaterResult from "./calcResult";
+import SelectField from "../ui/workoutField";
 
 export default function WaterIntakeCalculator() {
   const [weight, setWeight] = useState<string>("");
@@ -13,16 +19,6 @@ export default function WaterIntakeCalculator() {
   const [result, setResult] = useState<number | null>(null);
   const [wbgtResult, setWbgtResult] = useState<number | null>(null);
   const [showPopup, setShowPopup] = useState<boolean>(false);
-
-  function calculateWetBulbTemp(temp: number, hum: number, wind: number) {
-    const wetBulbTemp =
-      temp * Math.atan(0.151977 * Math.pow(hum + 8.313659, 0.5)) +
-      Math.atan(temp + hum) - Math.atan(hum - 1.676331) +
-      0.00391838 * Math.pow(hum, 1.5) * Math.atan(0.023101 * hum) - 4.686035;
-
-    const adjustedWetBulbTemp = wetBulbTemp - (wind * (1 - hum / 100) * 0.07);
-    return adjustedWetBulbTemp;
-  }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -39,41 +35,19 @@ export default function WaterIntakeCalculator() {
       (!useAdvanced || (!isNaN(wind) && !isNaN(hum) && !isNaN(sunHours))) &&
       (!isNaN(duration) && duration >= 0)
     ) {
-      let waterIntake = w * 0.035;
-
-      if (temp > 20) {
-        const extraTempFactor = (temp - 20) * 0.01;
-        waterIntake *= 1 + extraTempFactor;
-      }
-      if (useAdvanced) {
-        const wetBulbTemp = calculateWetBulbTemp(temp, hum, wind);
-        const globeTemp = temp + 2; // simple adjustment
-        const wbgt = (0.7 * wetBulbTemp) + (0.2 * globeTemp) + (0.1 * temp);
-        waterIntake *= 1 + (wbgt / 100);
-
-        // Add 2% per hour in sun
-        if (sunHours > 0) {
-          waterIntake *= 1 + (0.02 * sunHours);
-        }
-        setWbgtResult(wbgt);
-
-        // Outdoor workout: scale water need by WBGT
-        if (workoutType === "outdoor" && duration > 0) {
-          // Example: 1L/hour * (1 + wbgt/50) for more sensitivity
-          waterIntake += duration * 1.0 * (1 + wbgt / 50);
-        } else if (workoutType === "indoor" && duration > 0) {
-          waterIntake += duration * 0.7;
-        }
-      } else {
-        // Basic calculation
-        if (workoutType === "outdoor" && duration > 0) {
-          waterIntake += duration * 1.0;
-        } else if (workoutType === "indoor" && duration > 0) {
-          waterIntake += duration * 0.7;
-        }
-      }
-
+      const { waterIntake, wbgt } = calculateWaterIntake({
+        weight: w,
+        temperature: temp,
+        humidity: hum,
+        windSpeed: wind,
+        hoursInSun: sunHours,
+        workoutType,
+        workoutDuration: duration,
+        useAdvanced,
+        calculateWetBulbTemp
+      });
       setResult(waterIntake);
+      setWbgtResult(wbgt);
     } else {
       setResult(null);
     }
@@ -86,78 +60,97 @@ export default function WaterIntakeCalculator() {
         Enter your details to calculate your recommended daily water intake.
       </p>
       <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4">
-        <label className="flex flex-col gap-2 font-medium">
-          Body weight (kg)
-          <input type="number" min="1" step="any" value={weight} onChange={e => setWeight(e.target.value)} className="border rounded px-3 py-2 text-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-background text-foreground" placeholder="e.g. 70" required />
-        </label>
-        <label className="flex flex-col gap-2 font-medium">
-          Temperature (°C)
-          <input type="number" step="any" value={temperature} onChange={e => setTemperature(e.target.value)} className="border rounded px-3 py-2 text-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-background text-foreground" placeholder="e.g. 25" required />
-        </label>
-        {/* Workout fields start */}
-        <label className="flex flex-col gap-2 font-medium">
-          Workout
-          <select value={workoutType} onChange={e => setWorkoutType(e.target.value as "none" | "indoor" | "outdoor")} className="border rounded px-3 py-2 text-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-background text-foreground">
-            <option value="none">No workout</option>
-            <option value="indoor">Indoor</option>
-            <option value="outdoor">Outdoor</option>
-          </select>
-        </label>
+        <InputField
+          label="Body weight (kg)"
+          type="number"
+          min={1}
+          step="any"
+          value={weight}
+          onChange={e => setWeight(e.target.value)}
+          placeholder="e.g. 70"
+          required
+        />
+        <InputField
+          label="Temperature (°C)"
+          type="number"
+          step="any"
+          value={temperature}
+          onChange={e => setTemperature(e.target.value)}
+          placeholder="e.g. 25"
+          required
+        />
+        <SelectField
+          label="Workout"
+          value={workoutType}
+          onChange={e => setWorkoutType(e.target.value as "none" | "indoor" | "outdoor")}
+          options={[
+            { value: "none", label: "No workout" },
+            { value: "indoor", label: "Indoor" },
+            { value: "outdoor", label: "Outdoor" }
+          ]}
+        />
         {workoutType !== "none" && (
-          <label className="flex flex-col gap-2 font-medium">
-            Workout duration (hours)
-            <input type="number" min="0" step="any" value={workoutDuration} onChange={e => setWorkoutDuration(e.target.value)} className="border rounded px-3 py-2 text-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-background text-foreground" placeholder="e.g. 1" required />
-          </label>
+          <InputField
+            label="Workout duration (hours)"
+            type="number"
+            min={0}
+            step="any"
+            value={workoutDuration}
+            onChange={e => setWorkoutDuration(e.target.value)}
+            placeholder="e.g. 1"
+            required
+          />
         )}
-        {/* Workout fields end */}
         <label className="flex flex-row items-center gap-2 font-medium">
           <input type="checkbox" checked={useAdvanced} onChange={e => setUseAdvanced(e.target.checked)} />
           Use advanced calculation
         </label>
         {useAdvanced && (
           <>
-            <label className="flex flex-col gap-2 font-medium">
-              Humidity (%)
-              <input type="number" min="0" max="100" step="any" value={humidity} onChange={e => setHumidity(e.target.value)} className="border rounded px-3 py-2 text-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-background text-foreground" placeholder="e.g. 70" required />
-            </label>
-            <label className="flex flex-col gap-2 font-medium">
-              Hours in Sunlight
-              <input type="number" min="0" max="24" step="any" value={hoursInSun} onChange={e => setHoursInSun(e.target.value)} className="border rounded px-3 py-2 text-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-background text-foreground" placeholder="e.g. 3" required />
-            </label>
-            <label className="flex flex-col gap-2 font-medium">
-              Wind Speed (m/s)
-              <input type="number" step="any" value={windSpeed} onChange={e => setWindSpeed(e.target.value)} className="border rounded px-3 py-2 text-lg focus:outline-none focus:ring-2 focus:ring-blue-400 bg-background text-foreground" placeholder="e.g. 2" required />
-            </label>
+            <InputField
+              label="Humidity (%)"
+              type="number"
+              min={0}
+              max={100}
+              step="any"
+              value={humidity}
+              onChange={e => setHumidity(e.target.value)}
+              placeholder="e.g. 70"
+              required
+            />
+            <InputField
+              label="Hours in Sunlight"
+              type="number"
+              min={0}
+              max={24}
+              step="any"
+              value={hoursInSun}
+              onChange={e => setHoursInSun(e.target.value)}
+              placeholder="e.g. 3"
+              required
+            />
+            <InputField
+              label="Wind Speed (m/s)"
+              type="number"
+              step="any"
+              value={windSpeed}
+              onChange={e => setWindSpeed(e.target.value)}
+              placeholder="e.g. 2"
+              required
+            />
           </>
         )}
         <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded transition-colors">
           Calculate
         </button>
       </form>
-      {result !== null && (
-        <div className="mt-4 text-center">
-          <p className="text-lg">Recommended daily water intake:</p>
-          <p className="text-2xl font-bold mt-1">{result.toFixed(2)} liters</p>
-          {useAdvanced && wbgtResult !== null && (
-            <p className="text-sm text-gray-500 mt-2 cursor-pointer underline" onClick={() => setShowPopup(true)}>
-              WBGT Index: {wbgtResult.toFixed(2)}
-            </p>
-          )}
-        </div>
-      )}
-      {showPopup && (
-        <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black/50">
-          <div className="bg-white dark:bg-black/40 p-6 rounded-lg shadow-lg max-w-sm">
-            <h2 className="text-lg font-bold mb-2">What is WBGT?</h2>
-            <p className="text-sm text-gray-700 dark:text-gray-300">
-              WBGT (Wet Bulb Globe Temperature) measures heat stress by accounting for temperature, humidity, wind speed, and sunlight exposure.
-            </p>
-            <button onClick={() => setShowPopup(false)} className="mt-4 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded">
-              Close
-            </button>
-          </div>
-        </div>
-      )}
+      <WaterResult
+  result={result}
+  useAdvanced={useAdvanced}
+  wbgtResult={wbgtResult}
+  onShowPopup={() => setShowPopup(true)}
+/>
+      {showPopup && <WBGTInfoPopup onClose={() => setShowPopup(false)} />} 
     </div>
   );
 }

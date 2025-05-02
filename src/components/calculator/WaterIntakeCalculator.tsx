@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { calculateWetBulbTemp } from "../../utils/calculateWetBulbTemp";
 import { calculateWaterIntake } from "../../utils/waterIntakeCalculator";
-import InputField from "../ui/calcInput";
+import InputField from "../ui/inputFields";
 import WBGTInfoPopup from "../ui/popup";
 import WaterResult from "./calcResult";
 import SelectField from "../ui/workoutField";

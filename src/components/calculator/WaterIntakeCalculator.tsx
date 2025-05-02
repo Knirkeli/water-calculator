@@ -2,10 +2,11 @@
 import { useState } from "react";
 import { calculateWetBulbTemp } from "../../utils/calculateWetBulbTemp";
 import { calculateWaterIntake } from "../../utils/waterIntakeCalculator";
-import InputField from "../ui/inputFields";
+import InputField from "../input/inputFields";
+import AdvancedFields from "../input/advancedFields";
 import WBGTInfoPopup from "../ui/popup";
 import WaterResult from "./calcResult";
-import SelectField from "../ui/workoutField";
+import SelectField from "../input/workoutField";
 import DietSelector from "./dietSelector";
 import DIET_WATER_GAIN from "../../constants/dietWaterGains";
 
@@ -110,39 +111,14 @@ export default function WaterIntakeCalculator() {
           Use advanced calculation
         </label>
         {useAdvanced && (
-          <>
-            <InputField
-              label="Humidity (%)"
-              type="number"
-              min={0}
-              max={100}
-              step="any"
-              value={humidity}
-              onChange={e => setHumidity(e.target.value)}
-              placeholder="e.g. 70"
-              required
-            />
-            <InputField
-              label="Hours in Sunlight"
-              type="number"
-              min={0}
-              max={24}
-              step="any"
-              value={hoursInSun}
-              onChange={e => setHoursInSun(e.target.value)}
-              placeholder="e.g. 3"
-              required
-            />
-            <InputField
-              label="Wind Speed (m/s)"
-              type="number"
-              step="any"
-              value={windSpeed}
-              onChange={e => setWindSpeed(e.target.value)}
-              placeholder="e.g. 2"
-              required
-            />
-          </>
+          <AdvancedFields
+            humidity={humidity}
+            setHumidity={setHumidity}
+            hoursInSun={hoursInSun}
+            setHoursInSun={setHoursInSun}
+            windSpeed={windSpeed}
+            setWindSpeed={setWindSpeed}
+          />
         )}
         <DietSelector diet={diet} setDiet={setDiet} />
         <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded transition-colors">

@@ -6,6 +6,8 @@ import InputField from "../ui/inputFields";
 import WBGTInfoPopup from "../ui/popup";
 import WaterResult from "./calcResult";
 import SelectField from "../ui/workoutField";
+import DietSelector from "./dietSelector";
+import DIET_WATER_GAIN from "../../constants/dietWaterGains";
 
 export default function WaterIntakeCalculator() {
   const [weight, setWeight] = useState<string>("");
@@ -19,6 +21,7 @@ export default function WaterIntakeCalculator() {
   const [result, setResult] = useState<number | null>(null);
   const [wbgtResult, setWbgtResult] = useState<number | null>(null);
   const [showPopup, setShowPopup] = useState<boolean>(false);
+  const [diet, setDiet] = useState<"normal" | "fruit" | "protein" | "carbohydrate">("normal");
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -46,7 +49,8 @@ export default function WaterIntakeCalculator() {
         useAdvanced,
         calculateWetBulbTemp
       });
-      setResult(waterIntake);
+      const waterFromDiet = DIET_WATER_GAIN[diet];
+      setResult(Math.max(waterIntake - waterFromDiet, 0));
       setWbgtResult(wbgt);
     } else {
       setResult(null);
@@ -54,7 +58,7 @@ export default function WaterIntakeCalculator() {
   }
 
   return (
-    <div className="w-full max-w-md bg-white dark:bg-black/40 rounded-xl shadow-lg p-8 flex flex-col items-center gap-6">
+    <div className="w-full max-w-md bg-white dark:bg-black/40 rounded-xl shadow-lg p-8 pt-6 flex flex-col items-center gap-6">
       <h1 className="text-3xl font-bold mb-2 text-center">Water Intake Calculator</h1>
       <p className="text-center text-base text-gray-600 dark:text-gray-300 mb-4">
         Enter your details to calculate your recommended daily water intake.
@@ -140,6 +144,7 @@ export default function WaterIntakeCalculator() {
             />
           </>
         )}
+        <DietSelector diet={diet} setDiet={setDiet} />
         <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded transition-colors">
           Calculate
         </button>

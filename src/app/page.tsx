@@ -1,7 +1,4 @@
 "use client";
-import { useState } from "react";
-import InputField from "../components/ui/calcInput";
-import WBGTInfoPopup from "../components/ui/popup";
 import WaterIntakeCalculator from "../components/calculator/WaterIntakeCalculator";
 
 export default function Home() {

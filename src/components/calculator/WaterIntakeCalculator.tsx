@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { calculateWetBulbTemp } from "../../utils/calculateWetBulbTemp";
+import { calculateWaterIntake } from "../../utils/waterIntakeCalculator";
 import InputField from "../ui/calcInput";
 import WBGTInfoPopup from "../ui/popup";
 import WaterResult from "./calcResult";
@@ -34,41 +35,19 @@ export default function WaterIntakeCalculator() {
       (!useAdvanced || (!isNaN(wind) && !isNaN(hum) && !isNaN(sunHours))) &&
       (!isNaN(duration) && duration >= 0)
     ) {
-      let waterIntake = w * 0.035;
-
-      if (temp > 20) {
-        const extraTempFactor = (temp - 20) * 0.01;
-        waterIntake *= 1 + extraTempFactor;
-      }
-      if (useAdvanced) {
-        const wetBulbTemp = calculateWetBulbTemp(temp, hum, wind);
-        const globeTemp = temp + 2; // simple adjustment
-        const wbgt = (0.7 * wetBulbTemp) + (0.2 * globeTemp) + (0.1 * temp);
-        waterIntake *= 1 + (wbgt / 100);
-
-        // Add 2% per hour in sun
-        if (sunHours > 0) {
-          waterIntake *= 1 + (0.02 * sunHours);
-        }
-        setWbgtResult(wbgt);
-
-        // Outdoor workout: scale water need by WBGT
-        if (workoutType === "outdoor" && duration > 0) {
-          // Example: 1L/hour * (1 + wbgt/50) for more sensitivity
-          waterIntake += duration * 1.0 * (1 + wbgt / 50);
-        } else if (workoutType === "indoor" && duration > 0) {
-          waterIntake += duration * 0.7;
-        }
-      } else {
-        // Basic calculation
-        if (workoutType === "outdoor" && duration > 0) {
-          waterIntake += duration * 1.0;
-        } else if (workoutType === "indoor" && duration > 0) {
-          waterIntake += duration * 0.7;
-        }
-      }
-
+      const { waterIntake, wbgt } = calculateWaterIntake({
+        weight: w,
+        temperature: temp,
+        humidity: hum,
+        windSpeed: wind,
+        hoursInSun: sunHours,
+        workoutType,
+        workoutDuration: duration,
+        useAdvanced,
+        calculateWetBulbTemp
+      });
       setResult(waterIntake);
+      setWbgtResult(wbgt);
     } else {
       setResult(null);
     }

@@ -7,18 +7,18 @@ import AdvancedFields from "../input/advancedFields";
 import WBGTInfoPopup from "../ui/popup";
 import WaterResult from "./calcResult";
 import SelectField from "../input/workoutField";
-import DietSelector from "./dietSelector";
+import DietSelector from "../input/dietSelector";
 import DIET_WATER_GAIN from "../../constants/dietWaterGains";
 
 export default function WaterIntakeCalculator() {
   const [weight, setWeight] = useState<string>("");
-  const [temperature, setTemperature] = useState<string>("20");
+  const [temperature, setTemperature] = useState<string>("");
   const [useAdvanced, setUseAdvanced] = useState<boolean>(false);
-  const [humidity, setHumidity] = useState<string>("50");
-  const [hoursInSun, setHoursInSun] = useState<string>("0");
-  const [windSpeed, setWindSpeed] = useState<string>("2");
+  const [humidity, setHumidity] = useState<string>("");
+  const [hoursInSun, setHoursInSun] = useState<string>("");
+  const [windSpeed, setWindSpeed] = useState<string>("");
   const [workoutType, setWorkoutType] = useState<"none" | "indoor" | "outdoor">("none");
-  const [workoutDuration, setWorkoutDuration] = useState<string>("0");
+  const [workoutDuration, setWorkoutDuration] = useState<string>("");
   const [result, setResult] = useState<number | null>(null);
   const [wbgtResult, setWbgtResult] = useState<number | null>(null);
   const [showPopup, setShowPopup] = useState<boolean>(false);

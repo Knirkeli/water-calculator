@@ -18,7 +18,7 @@ export default function WaterIntakeCalculator() {
   const [hoursInSun, setHoursInSun] = useState<string>("");
   const [windSpeed, setWindSpeed] = useState<string>("");
   const [workoutType, setWorkoutType] = useState<"none" | "indoor" | "outdoor">("none");
-  const [workoutDuration, setWorkoutDuration] = useState<string>("");
+  const [workoutDuration, setWorkoutDuration] = useState<string>("0");
   const [result, setResult] = useState<number | null>(null);
   const [wbgtResult, setWbgtResult] = useState<number | null>(null);
   const [showPopup, setShowPopup] = useState<boolean>(false);

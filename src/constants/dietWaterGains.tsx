@@ -1,3 +1,5 @@
+// This file contains the water gain values for different diets in liters.
+
 const DIET_WATER_GAIN = {
     carbohydrate: 0.5, // liters
     protein: 0.3,      // liters

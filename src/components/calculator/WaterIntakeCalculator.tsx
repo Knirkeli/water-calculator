@@ -1,4 +1,7 @@
 "use client";
+
+// This component is used to calculate the recommended daily water intake based on user input. This is the main component of the water intake calculator.
+
 import { useState } from "react";
 import { calculateWetBulbTemp } from "../../utils/calculateWetBulbTemp";
 import { calculateWaterIntake } from "../../utils/waterIntakeCalculator";

@@ -1,3 +1,5 @@
+// This file defines a reusable input field it is used for the main inputs in the calculator.
+
 interface InputFieldProps {
   label: string;
   type?: string;

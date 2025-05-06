@@ -1,4 +1,8 @@
 "use client";
+
+// This component is used to display the result of the water intake calculation
+// It shows the recommended daily water intake based on the user's input and the WBGT index if applicable
+
 interface WaterResultProps {
     result: number | null;
     useAdvanced: boolean;

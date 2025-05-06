@@ -1,3 +1,6 @@
+// This function calculates the recommended water intake based on various factors.
+// It takes into account the user's weight, temperature, humidity, wind speed, hours in sunlight, workout type and duration, and whether to use advanced calculations.
+
 export function calculateWaterIntake({
     weight,
     temperature,

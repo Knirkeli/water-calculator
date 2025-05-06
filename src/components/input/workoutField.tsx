@@ -1,3 +1,5 @@
+// This component lets the user select if they are going to work out or not.
+
 "use client"
 interface SelectFieldProps {
     label: string;

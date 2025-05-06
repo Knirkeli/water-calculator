@@ -1,4 +1,7 @@
 "use client";
+// This component is used to select the diet type for the water intake calculator
+// It allows the user to choose between normal, fruit heavy, protein heavy, and carbohydrate heavy diets
+
 interface DietSelectorProps {
   diet: "normal" | "fruit" | "protein" | "carbohydrate";
   setDiet: (diet: "normal" | "fruit" | "protein" | "carbohydrate") => void;

@@ -1,3 +1,6 @@
+
+// This file defines a popup component that displays information about WBGT (Wet Bulb Globe Temperature).
+
 interface WBGTInfoPopupProps {
   onClose: () => void;
 }

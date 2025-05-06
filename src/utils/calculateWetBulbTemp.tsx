@@ -1,3 +1,5 @@
+// This function calculates the wet bulb temperature based on the given temperature, humidity, and wind speed.
+
 export function calculateWetBulbTemp(temp: number, hum: number, wind: number) {
     const wetBulbTemp =
       temp * Math.atan(0.151977 * Math.pow(hum + 8.313659, 0.5)) +

@@ -1,5 +1,7 @@
 import InputField from "./inputFields";
 
+// This component is used to get the advanced fields for the water intake calculator
+
 interface AdvancedFieldsProps {
   humidity: string;
   setHumidity: (v: string) => void;

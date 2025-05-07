@@ -168,48 +168,55 @@ export default function WaterIntakeCalculator() {
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [diet, setDiet] = useState<"normal" | "fruit" | "protein" | "carbohydrate">("normal");
   const [showDetails, setShowDetails] = useState(false);
-  const [calculationDetails, setCalculationDetails] = useState<string>("");
+  const [rawWaterIntake, setRawWaterIntake] = useState<number | null>(null);
+  const [waterFromDiet, setWaterFromDiet] = useState<number>(DIET_WATER_GAIN[diet]);
+ 
 
   // Step-by-step mode state
   const [stepMode, setStepMode] = useState(false);
 
-  // Handles the calculation and result setting
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const w = parseFloat(weight.replace(",", "."));
-    const temp = parseFloat(temperature.replace(",", "."));
-    const hum = stepMode || useAdvanced ? parseFloat(humidity.replace(",", ".")) : 50;
-    const wind = stepMode || useAdvanced ? parseFloat(windSpeed.replace(",", ".")) : 0;
-    const sunHours = stepMode || useAdvanced ? parseFloat(hoursInSun.replace(",", ".")) : 0;
-    const duration = parseFloat(workoutDuration.replace(",", "."));
-  
-    if (
-      !isNaN(w) && w > 0 &&
-      !isNaN(temp) &&
-      (!stepMode && !useAdvanced || (!isNaN(wind) && !isNaN(hum) && !isNaN(sunHours))) &&
-      (!isNaN(duration) && duration >= 0)
-    ) {
-      // Get breakdown from calculation
-      const { waterIntake, wbgt, breakdown } = calculateWaterIntake({
-        weight: w,
-        temperature: temp,
-        humidity: hum,
-        windSpeed: wind,
-        hoursInSun: sunHours,
-        workoutType,
-        workoutDuration: duration,
-        useAdvanced: stepMode ? true : useAdvanced,
-        calculateWetBulbTemp
-      });
-      const waterFromDiet = DIET_WATER_GAIN[diet];
-      setResult(Math.max(waterIntake - waterFromDiet, 0));
-      setWbgtResult(wbgt);
-      setBreakdown(breakdown); // <-- This will now have values for all inputs
-    } else {
-      setResult(null);
-      setBreakdown(undefined);
-    }
+// Handles the calculation and result setting
+function handleSubmit(e: React.FormEvent) {
+  e.preventDefault();
+  const w = parseFloat(weight.replace(",", "."));
+  const temp = parseFloat(temperature.replace(",", "."));
+  const hum = stepMode || useAdvanced ? parseFloat(humidity.replace(",", ".")) : 50;
+  const wind = stepMode || useAdvanced ? parseFloat(windSpeed.replace(",", ".")) : 0;
+  const sunHours = stepMode || useAdvanced ? parseFloat(hoursInSun.replace(",", ".")) : 0;
+  const duration = parseFloat(workoutDuration.replace(",", "."));
+  const waterFromDiet = DIET_WATER_GAIN[diet];
+setWaterFromDiet(waterFromDiet);
+
+  if (
+    !isNaN(w) && w > 0 &&
+    !isNaN(temp) &&
+    (!stepMode && !useAdvanced || (!isNaN(wind) && !isNaN(hum) && !isNaN(sunHours))) &&
+    (!isNaN(duration) && duration >= 0)
+  ) {
+    // Get breakdown from calculation
+    const { waterIntake, wbgt, breakdown } = calculateWaterIntake({
+      weight: w,
+      temperature: temp,
+      humidity: hum,
+      windSpeed: wind,
+      hoursInSun: sunHours,
+      workoutType,
+      workoutDuration: duration,
+      useAdvanced: stepMode ? true : useAdvanced,
+      calculateWetBulbTemp
+    });
+    const waterFromDiet = DIET_WATER_GAIN[diet];
+    const finalResult = Math.max(waterIntake - waterFromDiet, 0);
+
+    setRawWaterIntake(waterIntake);
+    setResult(finalResult);
+    setWbgtResult(wbgt);
+    setBreakdown(breakdown);
+  } else {
+    setResult(null);
+    setBreakdown(undefined);
   }
+}
 
 const [breakdown, setBreakdown] = useState<Record<string, number> | undefined>(undefined);
 
@@ -326,23 +333,24 @@ if (stepMode && !useAdvanced) setUseAdvanced(true);
         Show calculation details
       </button>
       <CalculationDetailsPopup
-  open={showDetails}
-  onClose={() => setShowDetails(false)}
-  values={{
-    weight,
-    temperature,
-    humidity: (stepMode || useAdvanced) ? humidity : undefined,
-    windSpeed: (stepMode || useAdvanced) ? windSpeed : undefined,
-    hoursInSun: (stepMode || useAdvanced) ? hoursInSun : undefined,
-    workoutType,
-    workoutDuration,
-    diet,
-    waterIntake: result,
-    wbgt: wbgtResult,
-    waterFromDiet: DIET_WATER_GAIN[diet],
-    breakdown
-  }}
-/>
+        open={showDetails}
+        onClose={() => setShowDetails(false)}
+        values={{
+          weight,
+          temperature,
+          humidity: (stepMode || useAdvanced) ? humidity : undefined,
+          windSpeed: (stepMode || useAdvanced) ? windSpeed : undefined,
+          hoursInSun: (stepMode || useAdvanced) ? hoursInSun : undefined,
+          workoutType,
+          workoutDuration,
+          diet,
+          waterIntake: rawWaterIntake,      // raw, before diet subtraction
+          waterFromDiet,    // water from diet
+          finalResult: result, // after diet subtraction
+          wbgt: wbgtResult,
+          breakdown
+        }}
+      />
       {showPopup && <WBGTInfoPopup onClose={() => setShowPopup(false)} />}
     </div>
   );

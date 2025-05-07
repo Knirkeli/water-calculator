@@ -79,7 +79,7 @@ export function calculateWaterIntake({
   useAdvanced: boolean,
   calculateWetBulbTemp: (t: number, h: number, w: number) => number
 }) {
-  let breakdown: Record<string, number> = {};
+  const breakdown: Record<string, number> = {};
   let waterIntake = weight * 0.035;
   breakdown.weight = waterIntake;
 

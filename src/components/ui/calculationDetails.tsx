@@ -84,10 +84,12 @@ interface CalculationDetailsPopupProps {
     wbgt?: number | null;
     waterFromDiet?: number;
     breakdown?: Record<string, number>;
+    finalResult?: number | null;
   };
 }
+type ValuesType = CalculationDetailsPopupProps["values"];
 
-const explanations: Record<string, (values: any, breakdown: Record<string, number>) => string> = {
+const explanations: Record<string, (values: ValuesType, breakdown: Record<string, number>) => string> = {
     weight: (values, breakdown) =>
       `Your body weight sets the baseline for water needs. We use the formula: weight (kg) × 0.035 L. For your input (${values.weight} kg), this gives ${breakdown.weight?.toFixed(2)} L.`,
     temperature: (values, breakdown) =>
@@ -188,25 +190,25 @@ export default function CalculationDetailsPopup({ open, onClose, values }: Calcu
 )}
           <hr />
           <div>
-            <strong>Calculation:</strong>
-            {typeof values.waterIntake === "number" && (
-              <div>- Raw water intake: {values.waterIntake.toFixed(2)} liters</div>
-            )}
-            {typeof values.waterFromDiet === "number" && (
-              <div>- Water from diet: {values.waterFromDiet.toFixed(2)} liters</div>
-            )}
-          </div>
-          <div>
-            <strong>Result:</strong>
-            {typeof values.waterIntake === "number" && typeof values.waterFromDiet === "number" && (
-              <div>
-                - Recommended daily water intake: {(Math.max(values.waterIntake - values.waterFromDiet, 0)).toFixed(2)} liters
-              </div>
-            )}
-            {typeof values.wbgt === "number" && (
-              <div>- WBGT Index: {values.wbgt.toFixed(2)}</div>
-            )}
-          </div>
+          <strong>Calculation:</strong>
+  {typeof values.waterIntake === "number" && (
+    <div>- Raw water intake: {values.waterIntake.toFixed(2)} liters</div>
+  )}
+  {typeof values.waterFromDiet === "number" && (
+    <div>- Water from diet: {values.waterFromDiet.toFixed(2)} liters</div>
+  )}
+</div>
+<div>
+  <strong>Result:</strong>
+  {typeof values.finalResult === "number" && (
+    <div>
+      - Recommended daily water intake: {values.finalResult.toFixed(2)} liters
+    </div>
+  )}
+  {typeof values.wbgt === "number" && (
+    <div>- WBGT Index: {values.wbgt.toFixed(2)}</div>
+  )}
+</div>
         </div>
       </div>
     </div>

@@ -116,7 +116,7 @@ export default function CalculationDetailsPopup({ open, onClose, values }: Calcu
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
       <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6 max-w-lg w-full relative">
         <button
-          className="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
+          className="absolute top-4 right-4 text-gray-500 text-2xl hover:text-gray-800"
           onClick={onClose}
           aria-label="Close"
         >
@@ -192,7 +192,7 @@ export default function CalculationDetailsPopup({ open, onClose, values }: Calcu
           <div>
           <strong>Calculation:</strong>
   {typeof values.waterIntake === "number" && (
-    <div>- Raw water intake: {values.waterIntake.toFixed(2)} liters</div>
+    <div>- Raw water intake need: {values.waterIntake.toFixed(2)} liters</div>
   )}
   {typeof values.waterFromDiet === "number" && (
     <div>- Water from diet: {values.waterFromDiet.toFixed(2)} liters</div>

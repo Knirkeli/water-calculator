@@ -123,7 +123,7 @@ export default function CalculationDetailsPopup({ open, onClose, values }: Calcu
           ×
         </button>
         <h2 className="text-xl font-bold mb-4">Calculation Details</h2>
-        <div className="space-y-4 text-sm">
+        <div className="space-y-4 text-sm max-h-[80vh] overflow-y-auto">
         {values.weight && (
   <div>
     <strong>Weight:</strong> {values.weight} kg

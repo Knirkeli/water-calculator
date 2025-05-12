@@ -314,7 +314,12 @@ if (stepMode && !useAdvanced) setUseAdvanced(true);
             />
           )}
           <DietSelector diet={diet} setDiet={setDiet} />
-          <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded transition-colors">
+          <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded transition-colors"
+          onClick={() => {
+            setTimeout(() => {
+              window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth"});
+            }, 200);
+          }}>
             Calculate
           </button>
         </form>

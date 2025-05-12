@@ -290,8 +290,12 @@ export default function WaterIntakeCalculator() {
         setHumidity(weather.humidity);
         setWindSpeed(weather.windSpeed);
       }
-    } catch (e: any) {
-      alert(e.message || "Failed to fetch weather data.");
+    } catch (e: unknown) {
+      if (e instanceof Error) {
+        alert(e.message);
+      } else {
+        alert("Failed to fetch weather data.");
+      }
     }
     setLoadingWeather(false);
   };

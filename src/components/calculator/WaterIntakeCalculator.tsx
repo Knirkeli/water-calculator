@@ -240,7 +240,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { calculateWetBulbTemp } from "../../utils/calculateWetBulbTemp";
 import { calculateWaterIntake } from "../../utils/mainCalculations";
 import InputField from "../input/inputFields";
@@ -252,7 +252,15 @@ import DietSelector from "../input/dietSelector";
 import DIET_WATER_GAIN from "../../constants/dietWaterGains";
 import StepByStep from "./stepByStep";
 import CalculationDetailsPopup from "../ui/calculationDetails";
-import { fetchWeatherFromLocation } from "../weatherApi/weatherCall"; // <-- your utility file
+import { fetchWeatherFromLocation } from "../weatherApi/weatherCall";
+import CookieNotifier from "../ui/cookieNotifier";
+
+// look for the cookie and deactivate the auto-fill button if it is not accepted
+const COOKIE_NAME = "weather_cookie_consent";
+
+function getCookie(name: string) {
+  return document.cookie.split("; ").find(row => row.startsWith(name + "="))?.split("=")[1];
+}
 
 export default function WaterIntakeCalculator() {
   const [weight, setWeight] = useState<string>("");
@@ -273,6 +281,11 @@ export default function WaterIntakeCalculator() {
   const [loadingWeather, setLoadingWeather] = useState(false);
   const [breakdown, setBreakdown] = useState<Record<string, number> | undefined>(undefined);
   const [stepMode, setStepMode] = useState(false);
+  const [cookieConsent, setCookieConsent] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    setCookieConsent(getCookie(COOKIE_NAME));
+  }, []);
 
   // Weather auto-fill handler
   const handleFillWeather = async () => {
@@ -299,6 +312,8 @@ export default function WaterIntakeCalculator() {
     }
     setLoadingWeather(false);
   };
+
+  
 
   // Handles the calculation and result setting
   function handleSubmit(e: React.FormEvent) {
@@ -347,7 +362,10 @@ export default function WaterIntakeCalculator() {
 
   return (
     <div className="w-full max-w-md bg-white dark:bg-black/40 rounded-xl shadow-lg p-8 pt-6 flex flex-col items-center gap-6">
-      <h1 className="text-3xl font-bold mb-2 text-center">Water Intake Calculator</h1>
+      <CookieNotifier onConsentChange={setCookieConsent} />   
+      <div className="flex flex-row items-center mb-4">
+      <img src="/Vannlogo.png" alt="Water calculator logo" className="mx-auto mb-4 w-24 h-24" />
+      <h1 className="text-3xl font-bold mb-2 text-center">Water Intake Calculator</h1></div>
       <button
         className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded transition-colors px-4 w-full"
         onClick={() => setStepMode(!stepMode)}
@@ -357,9 +375,13 @@ export default function WaterIntakeCalculator() {
       </button>
       <button
         type="button"
-        className="mb-2 bg-green-600 hover:bg-green-700 text-white font-semibold py-2 rounded transition-colors px-4 w-full"
+        className={`mb-2 font-semibold py-2 rounded transition-colors px-4 w-full ${
+          loadingWeather || cookieConsent === "no"
+            ? "bg-gray-400 text-gray-700 cursor-not-allowed"
+            : "bg-green-600 hover:bg-green-700 text-white"
+        }`}
         onClick={handleFillWeather}
-        disabled={loadingWeather}
+        disabled={loadingWeather || cookieConsent === "no"}
       >
         {loadingWeather ? "Loading weather..." : "Auto-fill weather data"}
       </button>

@@ -361,11 +361,8 @@ export default function WaterIntakeCalculator() {
   if (stepMode && !useAdvanced) setUseAdvanced(true);
 
   return (
-    <div className="w-full max-w-md bg-white dark:bg-black/40 rounded-xl shadow-lg p-8 pt-6 flex flex-col items-center gap-6">
-      <CookieNotifier onConsentChange={setCookieConsent} />   
-      <div className="flex flex-row items-center mb-4">
-      <img src="/Vannlogo.png" alt="Water calculator logo" className="mx-auto mb-4 w-24 h-24" />
-      <h1 className="text-3xl font-bold mb-2 text-center">Water Intake Calculator</h1></div>
+    <div className="w-full max-w-md bg-white dark:bg-black/40 rounded-xl shadow-lg p-6 py-10 flex flex-col items-center gap-6 mt-36">
+      <CookieNotifier onConsentChange={setCookieConsent} />
       <button
         className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded transition-colors px-4 w-full"
         onClick={() => setStepMode(!stepMode)}

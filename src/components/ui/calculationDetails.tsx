@@ -127,7 +127,7 @@ export default function CalculationDetailsPopup({ open, onClose, values }: Calcu
         {values.weight && (
   <div>
     <strong>Weight:</strong> {values.weight} kg
-    <div className="text-gray-300">{explanations.weight(values, breakdown)}</div>
+    <div className="text-gray-700 dark:text-gray-300">{explanations.weight(values, breakdown)}</div>
     {breakdown.weight !== undefined && (
       <div className="text-blue-700">+{breakdown.weight.toFixed(2)} L</div>
     )}
@@ -136,7 +136,7 @@ export default function CalculationDetailsPopup({ open, onClose, values }: Calcu
 {values.temperature && (
   <div>
     <strong>Temperature:</strong> {values.temperature} °C
-    <div className="text-gray-300">{explanations.temperature(values, breakdown)}</div>
+    <div className="text-gray-700 dark:text-gray-300">{explanations.temperature(values, breakdown)}</div>
     {breakdown.temperature !== undefined && (
       <div className="text-blue-700">{breakdown.temperature >= 0 ? "+" : ""}{breakdown.temperature.toFixed(2)} L</div>
     )}
@@ -145,14 +145,14 @@ export default function CalculationDetailsPopup({ open, onClose, values }: Calcu
 {breakdown.wbgt !== undefined && (
   <div>
     <strong>WBGT effect:</strong>
-    <div className="text-gray-300">{explanations.wbgt(values, breakdown)}</div>
+    <div className="text-gray-700 dark:text-gray-300">{explanations.wbgt(values, breakdown)}</div>
     <div className="text-blue-700">{breakdown.wbgt >= 0 ? "+" : ""}{breakdown.wbgt.toFixed(2)} L</div>
   </div>
 )}
 {values.hoursInSun && (
   <div>
     <strong>Hours in Sun:</strong> {values.hoursInSun}
-    <div className="text-gray-300">{explanations.hoursInSun(values, breakdown)}</div>
+    <div className="text-gray-700 dark:text-gray-300">{explanations.hoursInSun(values, breakdown)}</div>
     {breakdown.hoursInSun !== undefined && (
       <div className="text-blue-700">{breakdown.hoursInSun >= 0 ? "+" : ""}{breakdown.hoursInSun.toFixed(2)} L</div>
     )}
@@ -161,19 +161,19 @@ export default function CalculationDetailsPopup({ open, onClose, values }: Calcu
 {values.humidity && (
   <div>
     <strong>Humidity:</strong> {values.humidity} %
-    <div className="text-gray-300">{explanations.humidity(values, breakdown)}</div>
+    <div className="text-gray-700 dark:text-gray-300">{explanations.humidity(values, breakdown)}</div>
   </div>
 )}
 {values.windSpeed && (
   <div>
     <strong>Wind Speed:</strong> {values.windSpeed} m/s
-    <div className="text-gray-300">{explanations.windSpeed(values, breakdown)}</div>
+    <div className="text-gray-700 dark:text-gray-300">{explanations.windSpeed(values, breakdown)}</div>
   </div>
 )}
 {values.workoutType && values.workoutType !== "none" && (
   <div>
     <strong>Workout:</strong> {values.workoutType} ({values.workoutDuration} h)
-    <div className="text-gray-300">{explanations.workout(values, breakdown)}</div>
+    <div className="text-gray-700 dark:text-gray-300">{explanations.workout(values, breakdown)}</div>
     {breakdown.workout !== undefined && (
       <div className="text-blue-700">{breakdown.workout >= 0 ? "+" : ""}{breakdown.workout.toFixed(2)} L</div>
     )}
@@ -182,7 +182,7 @@ export default function CalculationDetailsPopup({ open, onClose, values }: Calcu
 {values.diet && (
   <div>
     <strong>Diet:</strong> {values.diet}
-    <div className="text-gray-300">{explanations.diet(values, breakdown)}</div>
+    <div className="text-gray-700 dark:text-gray-300">{explanations.diet(values, breakdown)}</div>
     {typeof values.waterFromDiet === "number" && (
       <div className="text-blue-700">-{values.waterFromDiet.toFixed(2)} L</div>
     )}

@@ -114,7 +114,7 @@ export default function CalculationDetailsPopup({ open, onClose, values }: Calcu
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 pt-20">
-      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6 max-w-lg w-full relative">
+      <div className="bg-white dark:bg-slate-800 rounded-lg shadow-lg p-6 max-w-lg w-full relative">
         <button
           className="absolute top-4 right-4 text-gray-500 text-2xl hover:text-gray-800"
           onClick={onClose}

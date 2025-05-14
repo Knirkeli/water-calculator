@@ -82,9 +82,11 @@ export default function CookieNotifier({ onConsentChange }: { onConsentChange?: 
   return (
     <div className="fixed top-0 left-0 w-full h-full flex justify-center items-center bg-black/50 bg-blur-sm z-50 flex-col gap-4">
       <div className="bg-white p-6 rounded-lg shadow-lg max-w-md border border-gray-300">
+      <h2 className="text-xl text-gray-800 font-bold text-center mb-2">A wild cookie appeared</h2>
         <div>
             <img src="\Cookie.png" alt="cookie bathing in a galss of water" />
         </div>
+
         <div className="mb-2 text-center text-xl text-gray-800">
           <p>We are using cookies and location data to let you fill in weather data with a button click. This is activated by the Auto-fill button.</p> <br />
           <h3 className="font-bold text-2xl">Allow cookies?</h3>
